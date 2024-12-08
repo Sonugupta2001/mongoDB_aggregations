@@ -1,0 +1,34 @@
+[
+  {
+      "$match": {
+        "imdb.rating": { "$exists": true, "$ne": null , "$gte": -1}
+      }
+  },
+  {
+    "$sort": { "imdb.rating": -1 }
+  },
+  {
+    "$limit": 5
+  },
+  {
+    "$lookup": {
+      "from": "comments",
+      "localField": "_id",
+      "foreignField": "movie_id",
+      "as": "comments"
+    }
+  },
+  {
+    "$addFields": {
+      "commentCount": { "$size": "$comments" }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "title": 1,
+      "imdbRating": "$imdb.rating",
+      "commentCount": 1
+    }
+  }
+]
